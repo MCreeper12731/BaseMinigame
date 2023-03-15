@@ -1,0 +1,6 @@
+name: MinigameBase
+version: '${project.version}'
+main: net.skret.minigame.Main
+api-version: 1.19
+authors: [ MCreeper12731 ]
+description: A base minigame project

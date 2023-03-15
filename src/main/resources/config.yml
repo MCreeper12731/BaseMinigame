@@ -1,0 +1,11 @@
+#number of max players
+#default: 16
+max-players: 16
+
+#position of spawn point in [x, y, z]
+#defualt: [0.0, 100.0, 0.0]
+spawn-point: [0.0, 100.0, 0.0]
+
+#position of respawn point in [x, y, z]
+#defualt: [0.0, 110.0, 0.0]
+respawn-point: [0.0, 110.0, 0.0]
