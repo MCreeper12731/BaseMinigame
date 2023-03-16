@@ -20,6 +20,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ActivePhase extends Phase {
 
     @Override
     public void onEnable() {
-        checkPlayerState();
+        //checkPlayerState();
     }
 
     @Override
@@ -48,6 +49,8 @@ public class ActivePhase extends Phase {
         return new RestartingPhase(phaseManager, winningTeam);
     }
 
+    //OPTIONAL: for pvp, single life minigames only
+    /*
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
 
@@ -109,7 +112,42 @@ public class ActivePhase extends Phase {
         }
         phaseManager.nextPhase();
 
-    }
+    }*/
+
+    //OPTIONAL: for minigames that need timers
+    /*
+    private class GameCounter extends BukkitRunnable {
+
+        private int time = ; //set game time
+
+        @Override
+        public void run() {
+
+            if (time <= 5 && time > 1) {
+                Bukkit.broadcastMessage(Color.color("&e" + time + " seconds left!"));
+            }
+            if (time == 1) {
+                Bukkit.broadcastMessage(Color.color("&e" + time + " second left!"));
+            }
+
+            if (time <= 0) {
+                this.cancel();
+                phaseManager.nextPhase();
+                return;
+            }
+
+            if (time == 10) {
+                Bukkit.broadcastMessage(Color.color("&e10 seconds left!"));
+            }
+
+            time--;
+
+        }
+
+        public void start() {
+            this.runTaskTimer(phaseManager.getPlugin(), 0L, 20L);
+        }
+    }*/
 
     //Standard login and grief listeners
 
@@ -127,7 +165,7 @@ public class ActivePhase extends Phase {
 
         phaseManager.getPlayerManager().removePlayer(player.getUniqueId());
         Bukkit.broadcastMessage(Color.color("&e" + player.getName() + " left the game"));
-        checkPlayerState();
+        //checkPlayerState();
     }
 
     @EventHandler
