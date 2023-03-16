@@ -37,6 +37,8 @@ public class ActivePhase extends Phase {
     @Override
     public void onEnable() {
         //checkPlayerState();
+        phaseManager.getPlayerManager().giveItems();
+        phaseManager.getPlayerManager().enableKits();
     }
 
     @Override
