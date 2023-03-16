@@ -39,13 +39,10 @@ public class StartingPhase extends Phase {
             for (UUID playerId : team.getPlayers()) {
 
                 Player player = Bukkit.getPlayer(playerId);
-                if (player == null) {
-                    team.removePlayer(playerId);
-                    continue;
-                }
                 Location location = positionIterator.next().getLocation(player.getWorld());
                 player.teleport(location);
                 player.getInventory().remove(Material.PAPER);
+
             }
         }
 

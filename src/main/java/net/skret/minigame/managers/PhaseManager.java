@@ -7,6 +7,7 @@ import net.skret.minigame.phases.ActivePhase;
 import net.skret.minigame.phases.Phase;
 import net.skret.minigame.phases.WaitingPhase;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 
@@ -19,16 +20,24 @@ public class PhaseManager {
     @Getter
     private final ConfigManager configManager;
     @Getter
+    private final CustomItemManager customItemManager;
+    @Getter
+    private final World world;
+    @Getter
     private final Messenger messenger;
     private Phase currentPhase;
 
     public PhaseManager(Main plugin,
                         PlayerManager playerManager,
                         ConfigManager configManager,
+                        CustomItemManager customItemManager,
+                        World world,
                         Messenger messenger) {
         this.plugin = plugin;
         this.playerManager = playerManager;
         this.configManager = configManager;
+        this.customItemManager = customItemManager;
+        this.world = world;
         this.messenger = messenger;
         setPhase(new WaitingPhase(this));
     }

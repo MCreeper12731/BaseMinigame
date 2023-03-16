@@ -27,7 +27,7 @@ import java.util.UUID;
 
 public class ActivePhase extends Phase {
 
-    private Team winningTeam = Team.GREEN;
+    private Team winningTeam;
 
     public ActivePhase(PhaseManager phaseManager) {
         super(phaseManager);
@@ -51,37 +51,40 @@ public class ActivePhase extends Phase {
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
 
-        if (!(event.getEntity() instanceof Player hurted)) return;
+        if (!(event.getEntity() instanceof Player damageTaker)) return;
 
-        Player damager;
+        Player damageDealer;
 
+        //Get damage dealer from different damage sources
         if (event.getDamager() instanceof Arrow arrow) {
             if (!(arrow.getShooter() instanceof Player player)) return;
-            damager = player;
+            damageDealer = player;
         } else if (event.getDamager() instanceof Player) {
-            damager = (Player) event.getDamager();
+            damageDealer = (Player) event.getDamager();
         } else if (event.getDamager() instanceof Firework firework) {
             if (!(firework.getShooter() instanceof Player player)) return;
-            damager = player;
+            damageDealer = player;
         } else return;
 
-        if (phaseManager.getPlayerManager().getPlayer(damager.getUniqueId()).getTeam().getPlayers().contains(hurted.getUniqueId())) {
+        //Check if damage dealer and damage taker are on the same team
+        if (phaseManager.getPlayerManager().getPlayer(damageDealer.getUniqueId()).getTeam().getPlayers().contains(damageTaker.getUniqueId())) {
             event.setCancelled(true);
             return;
         }
 
-        if (hurted.getHealth() - event.getDamage() <= 0) {
-            hurted.setHealth(20.0);
-            Bukkit.broadcastMessage(Color.color("&e" + damager.getDisplayName() + " killed " + hurted.getDisplayName()));
+        //Check if hit would kill the player
+        if (damageTaker.getHealth() - event.getDamage() <= 0) {
+            damageTaker.setHealth(20.0);
+            Bukkit.broadcastMessage(Color.color("&e" + damageDealer.getDisplayName() + " killed " + damageTaker.getDisplayName()));
             List<Double> spawnPoint = phaseManager.getConfigManager().getConfig().getDoubleList("spawn-point");
-            Location location = new Location(hurted.getWorld(), spawnPoint.get(0), spawnPoint.get(1), spawnPoint.get(2));
-            hurted.sendTitle(Color.color("&cYou are dead!"), Color.color("&7You are now spectating"), 0, 60, 10);
-            hurted.teleport(location);
-            hurted.playSound(hurted.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 1);
-            hurted.setGameMode(GameMode.SPECTATOR);
-            hurted.getInventory().clear();
+            Location location = new Location(damageTaker.getWorld(), spawnPoint.get(0), spawnPoint.get(1), spawnPoint.get(2));
+            damageTaker.sendTitle(Color.color("&cYou are dead!"), Color.color("&7You are now spectating"), 0, 60, 10);
+            damageTaker.teleport(location);
+            damageTaker.playSound(damageTaker.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 1);
+            damageTaker.setGameMode(GameMode.SPECTATOR);
+            damageTaker.getInventory().clear();
 
-            phaseManager.getPlayerManager().setAlive(hurted.getUniqueId(), false);
+            phaseManager.getPlayerManager().setAlive(damageTaker.getUniqueId(), false);
             checkPlayerState();
             event.setCancelled(true);
         }

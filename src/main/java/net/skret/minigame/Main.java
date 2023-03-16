@@ -8,12 +8,16 @@ import dev.jorel.commandapi.CommandAPIConfig;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
 import net.skret.minigame.managers.*;
+import net.skret.minigame.map.GameMap;
+import net.skret.minigame.map.LocalGameMap;
 import net.skret.minigame.messenger.Messenger;
 import net.skret.minigame.models.kits.Kit;
 import net.skret.minigame.util.Color;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +25,7 @@ public final class Main extends JavaPlugin {
 
     private Messenger messenger;
     private CreeperItems api;
+    private GameMap map;
 
     private ConfigManager configManager;
     private SpawnManager spawnManager;
@@ -40,14 +45,21 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         CommandAPI.onEnable(this);
 
+        getDataFolder().mkdirs();
+
+        File gameMapsFolder = new File(getDataFolder().getAbsoluteFile(), "gameMaps");
+        if (!gameMapsFolder.exists()) gameMapsFolder.getAbsoluteFile().mkdirs();
+
+        map = new LocalGameMap(gameMapsFolder, "TestWorld", true);
+
         messenger = new Messenger(this);
-        api = new CreeperItems(this, "test");
+        api = new CreeperItems(this, "minigame");
         configManager = new ConfigManager(this);
         spawnManager = new SpawnManager(this);
         playerManager = new PlayerManager(this);
-        phaseManager = new PhaseManager(this, playerManager, configManager, messenger);
-        guiManager = new GuiManager(this, playerManager);
         customItemManager = new CustomItemManager(api, guiManager);
+        phaseManager = new PhaseManager(this, playerManager, configManager, customItemManager, map.getWorld(), messenger);
+        guiManager = new GuiManager(this, playerManager);
 
         spawnManager.loadSpawns();
 
@@ -115,6 +127,31 @@ public final class Main extends JavaPlugin {
                         phaseManager.forceStart(sender);
                         return;
                     }
+                })
+                .register();
+
+        new CommandAPICommand("map")
+                .withArguments(
+                        new StringArgument("").replaceSuggestions(ArgumentSuggestions.strings(
+                                "reset", "warp"
+                        )))
+                .executes((sender, args) -> {
+
+                    String arg = (String) args[0];
+
+                    if (arg.equalsIgnoreCase("reset")) {
+                        map.restoreFromSource();
+                        sender.sendMessage(Color.color("&aMap restored!"));
+                        return;
+                    }
+                    if (arg.equalsIgnoreCase("warp")) {
+                        if (!(sender instanceof Player player)) {
+                            sender.sendMessage(Color.color("&cOnly players can run this command!"));
+                            return;
+                        }
+                        player.teleport(new Location(map.getWorld(), 0, 100, 0));
+                    }
+
                 })
                 .register();
 

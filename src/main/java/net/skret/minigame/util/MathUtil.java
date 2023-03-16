@@ -1,6 +1,6 @@
 package net.skret.minigame.util;
 
-public class CusMath {
+public class MathUtil {
 
     public static double round(double num, double rounding) {
         num += 180;

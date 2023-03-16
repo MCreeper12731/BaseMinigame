@@ -1,4 +1,5 @@
 #number of max players
+#this number should be divisible by number of teams
 #default: 16
 max-players: 16
 

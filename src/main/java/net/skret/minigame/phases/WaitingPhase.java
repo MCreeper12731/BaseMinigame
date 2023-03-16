@@ -27,7 +27,6 @@ import java.util.List;
 public class WaitingPhase extends Phase {
 
     private Countdown countdown;
-    private Location mainSpawnPoint;
 
     public WaitingPhase(PhaseManager phaseManager) {
         super(phaseManager);
@@ -35,19 +34,7 @@ public class WaitingPhase extends Phase {
 
     @Override
     public void onEnable() {
-        countdown = new Countdown();
-        List<Double> spawnPoint = phaseManager.getConfigManager().getConfig().getDoubleList("spawn-point");
-        mainSpawnPoint = new Location(Bukkit.getWorld("world"), spawnPoint.get(0), spawnPoint.get(1), spawnPoint.get(2));
 
-        for (PlayerWrapper playerWrapper : phaseManager.getPlayerManager().getPlayers()) {
-            playerWrapper.setAlive(true);
-            Player player = Bukkit.getPlayer(playerWrapper.getId());
-            if (player == null) {
-                phaseManager.getPlayerManager().removePlayer(playerWrapper.getId());
-                continue;
-            }
-            addPlayer(player);
-        }
     }
 
     @Override
@@ -72,14 +59,12 @@ public class WaitingPhase extends Phase {
         if (event.getPlayer().isOp()) return;
         event.setJoinMessage("");
 
+        countdown = new Countdown();
+        List<Double> spawnPoint = phaseManager.getConfigManager().getConfig().getDoubleList("spawn-point");
+        Location mainSpawnPoint = new Location(phaseManager.getWorld(), spawnPoint.get(0), spawnPoint.get(1), spawnPoint.get(2));
+
         Player player = event.getPlayer();
         phaseManager.getPlayerManager().addPlayer(player.getUniqueId(), Team.values()[(int)(Math.random() * Team.values().length)]);
-
-        addPlayer(player);
-
-    }
-
-    private void addPlayer(Player player) {
 
         player.teleport(mainSpawnPoint);
         player.setGameMode(GameMode.SURVIVAL);
@@ -88,8 +73,9 @@ public class WaitingPhase extends Phase {
         player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
         player.setHealth(20);
         player.setFoodLevel(20);
-        //TODO team selector
-        //TODO kit selector
+        player.getInventory().setItem(0, phaseManager.getCustomItemManager().getTeamSelectionItem());
+        player.getInventory().setItem(1, phaseManager.getCustomItemManager().getKitSelectionItem());
+
         Bukkit.broadcastMessage(Color.color(String.format(
                 "&e%s joined the game (%d/%d)",
                 player.getDisplayName(),

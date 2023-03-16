@@ -1,7 +1,7 @@
 package net.skret.minigame.models;
 
 import lombok.Data;
-import net.skret.minigame.util.CusMath;
+import net.skret.minigame.util.MathUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -23,11 +23,11 @@ public class Position {
     }
 
     public Position(double x, double y, double z, double yaw, double pitch) {
-        this.x = CusMath.round(x, 0.5);
-        this.y = CusMath.round(y, 0.5);
-        this.z = CusMath.round(z, 0.5);
-        this.yaw = CusMath.round(yaw, 45);
-        this.pitch = CusMath.round(pitch, 45);
+        this.x = MathUtil.round(x, 0.5);
+        this.y = MathUtil.round(y, 0.5);
+        this.z = MathUtil.round(z, 0.5);
+        this.yaw = MathUtil.round(yaw, 45);
+        this.pitch = MathUtil.round(pitch, 45);
     }
 
     public Position(Location location) {
