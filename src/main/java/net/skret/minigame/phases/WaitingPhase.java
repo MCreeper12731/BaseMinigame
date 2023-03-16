@@ -60,13 +60,11 @@ public class WaitingPhase extends Phase {
         event.setJoinMessage("");
 
         countdown = new Countdown();
-        List<Double> spawnPoint = phaseManager.getConfigManager().getConfig().getDoubleList("spawn-point");
-        Location mainSpawnPoint = new Location(phaseManager.getWorld(), spawnPoint.get(0), spawnPoint.get(1), spawnPoint.get(2));
 
         Player player = event.getPlayer();
         phaseManager.getPlayerManager().addPlayer(player.getUniqueId(), Team.values()[(int)(Math.random() * Team.values().length)]);
 
-        player.teleport(mainSpawnPoint);
+        player.teleport(phaseManager.getConfigManager().getLocation(phaseManager.getWorld(), "spawn-point"));
         player.setGameMode(GameMode.SURVIVAL);
         player.getInventory().clear();
         player.getInventory().setArmorContents(new ItemStack[4]);

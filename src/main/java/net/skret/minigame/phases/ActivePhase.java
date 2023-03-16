@@ -76,10 +76,8 @@ public class ActivePhase extends Phase {
         if (damageTaker.getHealth() - event.getDamage() <= 0) {
             damageTaker.setHealth(20.0);
             Bukkit.broadcastMessage(Color.color("&e" + damageDealer.getDisplayName() + " killed " + damageTaker.getDisplayName()));
-            List<Double> spawnPoint = phaseManager.getConfigManager().getConfig().getDoubleList("spawn-point");
-            Location location = new Location(damageTaker.getWorld(), spawnPoint.get(0), spawnPoint.get(1), spawnPoint.get(2));
             damageTaker.sendTitle(Color.color("&cYou are dead!"), Color.color("&7You are now spectating"), 0, 60, 10);
-            damageTaker.teleport(location);
+            damageTaker.teleport(phaseManager.getConfigManager().getLocation(phaseManager.getWorld(), "respawn-point"));
             damageTaker.playSound(damageTaker.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 1);
             damageTaker.setGameMode(GameMode.SPECTATOR);
             damageTaker.getInventory().clear();
